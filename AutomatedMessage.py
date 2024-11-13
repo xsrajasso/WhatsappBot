@@ -1,17 +1,19 @@
 from datetime import datetime
 import pandas as pd
 from openpyxl import load_workbook
+import sys
 
 # Obtener la fecha actual y el día de la semana
 fecha_actual = datetime.now()
 dia_semana_numero = fecha_actual.weekday()
 dias_semana = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]
 dia_semana_nombre = dias_semana[dia_semana_numero]
+# dia_semana_nombre = "Sabado"
 
 # Función para obtener matrículas con más de 3 faltas como enteros
 def obtener_matriculas_con_faltas(archivo, hoja, umbral_faltas=2):
     df = pd.read_excel(archivo, sheet_name=hoja)
-    print("Hoy es:", dia_semana_nombre)
+    # print("Hoy es:", dia_semana_nombre)
     matriculas = []
 
     if dia_semana_nombre == "Lunes":
@@ -24,7 +26,11 @@ def obtener_matriculas_con_faltas(archivo, hoja, umbral_faltas=2):
         matriculas = df.loc[df['Faltas.3'] > umbral_faltas, 'Matricula'].astype(int).tolist()
     elif dia_semana_nombre == "Viernes":
         matriculas = df.loc[df['Faltas.4'] > umbral_faltas, 'Matricula'].astype(int).tolist()
-    
+    else:
+        print("Hoy no hay clases! Presione enter para salir.")
+        input()
+        sys.exit()
+        
     return matriculas
 
 def buscar_valor_en_hojas(ruta_archivo, valor_busqueda):
@@ -46,7 +52,7 @@ def buscar_valor_en_hojas(ruta_archivo, valor_busqueda):
                 print(f"La matricula '{valor_busqueda}' se encuentra en la fila {numero_fila} del grupo '{nombre_hoja}'.")
                 return nombre_hoja, numero_fila
 
-    print(f"El valor '{valor_busqueda}' no se encontró en ninguna hoja del directorio.")
+    print(f"La matricula '{valor_busqueda}' no se encontró en ninguna hoja del directorio.")
     return None, None
 
 def obtener_valor_celda_B_y_I(ruta_archivo, nombre_hoja, fila_encontrada):
@@ -86,7 +92,7 @@ def escribir_mensaje_no_encontrado(matricula, ruta_archivo_salida):
     print(f"Mensaje de no encontrado para la matrícula {matricula} agregado al archivo {ruta_archivo_salida}.")
 
 # Especifica el archivo y la hoja
-archivo = "Peggy3erPiso.xlsx"
+archivo = "PEGGY C17-C24.xlsx"
 print("¿Qué grupo quieres buscar? (Ejemplo: 1°A)")
 hoja = input()
 matriculas = obtener_matriculas_con_faltas(archivo, hoja)
@@ -96,15 +102,19 @@ ruta_salida = "mensajeSalida.txt"
 open(ruta_salida, 'w').close()
 
 # Para cada matrícula, busca y genera el mensaje
-for m in matriculas:
-    print(f"Se está buscando la matrícula ({m}) en el Directorio")
-    ruta_directorio = "Directorio.xlsx"
-    nombre_hoja_encontrada, fila_encontrada = buscar_valor_en_hojas(ruta_directorio, m)
-
-    if nombre_hoja_encontrada and fila_encontrada:
-        nombre_alumno, telefonoMama, telefonoPapa = obtener_valor_celda_B_y_I(ruta_directorio, nombre_hoja_encontrada, fila_encontrada)
-        escribir_mensaje_en_archivo(nombre_alumno, telefonoMama, telefonoPapa, m, ruta_salida)
-    else:
-        escribir_mensaje_no_encontrado(m, ruta_salida)
-
-print(f"Mensajes completados y guardados en {ruta_salida}.")
+if not matriculas:  # Si la lista está vacía
+    print(f"No hay alumnos con al menos 3 faltas en el grupo {hoja} el día de hoy {dia_semana_nombre}.")
+else:
+    print(f"Se encontraron alumnos con al menos 3 faltas en el día de hoy {dia_semana_nombre}.")
+    for m in matriculas:
+        print(f"Se está buscando la matrícula ({m}) en el Directorio...")
+        ruta_directorio = "Directorio.xlsx"
+        nombre_hoja_encontrada, fila_encontrada = buscar_valor_en_hojas(ruta_directorio, m)
+    
+        if nombre_hoja_encontrada and fila_encontrada:
+            nombre_alumno, telefonoMama, telefonoPapa = obtener_valor_celda_B_y_I(ruta_directorio, nombre_hoja_encontrada, fila_encontrada)
+            escribir_mensaje_en_archivo(nombre_alumno, telefonoMama, telefonoPapa, m, ruta_salida)
+        else:
+            escribir_mensaje_no_encontrado(m, ruta_salida)
+    
+    print(f"Mensajes completados y guardados en {ruta_salida}.")

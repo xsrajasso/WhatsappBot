@@ -1,4 +1,3 @@
-# Ignorar archivos Excel específicos
-Directorio.xlsx
-Peggy3erPiso.xlsx
-mensajeSalida.txt
+# Ignorar archivos de entrada y salida de datos
+*.txt
+*.xlsx

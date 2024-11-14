@@ -76,10 +76,10 @@ def escribir_mensaje_en_archivo(nombre_alumno, telefonoMama, telefonoPapa, matri
     :param ruta_archivo_salida: Ruta al archivo de salida donde se escribirá el mensaje.
     """
     mensaje = (
-        f"Enviar al teléfono de la mamá: ({telefonoMama}).\n"
-        f"Enviar al teléfono del papá: ({telefonoPapa}).\n\n"
-        f"¡Buen dia! Nos comunicamos de parte de Prefectura de bachillerato Carolina. " 
-        "Para notificarle que el día de hoy el alumno: {nombre_alumno} con matrícula {matricula}, "
+        f"Enviar al teléfono de la mamá: {telefonoMama}.\n"
+        f"Enviar al teléfono del papá: {telefonoPapa}.\n\n"
+        "¡Buen dia! Nos comunicamos de parte de Prefectura de bachillerato Carolina. " 
+        f"Para notificarle que el día de hoy el alumno: {nombre_alumno} con matrícula {matricula}, "
         "tuvo más de tres inasistencias a clases, lo cual pone en riesgo su formación académica. "
         "Para más información por favor comuníquese con la Lic. Liliana Ávila a los teléfonos "
         "8443275869 vía WhatsApp o bien al 8447771002 para llamadas.\n\nGracias.\n\n"
